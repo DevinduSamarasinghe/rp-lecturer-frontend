@@ -61,7 +61,7 @@ const BubbleChart = ({ session }) => {
   };
 
   return (
-    <div className="w-full md:w-2/3 mx-auto">
+    <div className="w-full mx-auto ms:w-2/3">
       <h3 className="text-xl font-bold text-center">Face Tracking Visualization</h3>
       <div style={{ height: '400px' }}>
         <Bubble data={data} options={options} />

@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { formatDuration } from '@/lib/utils/format_duration';
-
+import { formatDuration } from '@/lib/format_utils/format_duration';
 
 const SessionsPage = () => {
   const [sessions, setSessions] = useState([]);
@@ -13,7 +12,7 @@ const SessionsPage = () => {
   useEffect(() => {
     const fetchSessions = async () => {
       try {
-        const response = await fetch('/api/sessions');
+        const response = await fetch('/api/server/sessions');
 
         if (!response.ok) {
           throw new Error('Error fetching sessions');
@@ -28,7 +27,6 @@ const SessionsPage = () => {
         setLoading(false);
       }
     };
-
     fetchSessions();
   }, []);
 
