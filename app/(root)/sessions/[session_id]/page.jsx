@@ -1,6 +1,11 @@
 'use client';
 
+import PosturePieChart from '@/Components/Sessions/PosturePie';
 import React, { useEffect, useState } from 'react';
+import { formatDuration } from '@/lib/utils/format_duration';
+import HeatmapPlot from '@/Components/Sessions/HeadMap';
+import PresencePieChart from '@/Components/Sessions/LecturePresence';
+import BubbleChart from '@/Components/Sessions/BubbleChart';
 
 const SessionDetailPage = ({ params }) => {
   //const session_id = params.session_id; // Access session_id from params
@@ -41,12 +46,12 @@ const SessionDetailPage = ({ params }) => {
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Session ID: {session.session_id}</h1>
       <p className="text-lg mb-4">User Email: {session.user_email}</p>
-      <p className="text-lg mb-4">Session Start: {session.session_start_time}</p>
-      <p className="text-lg mb-4">Session End: {session.session_end_time}</p>
-      <p className="text-lg mb-4">Session Duration: {session.session_duration} seconds</p>
+      <p className="text-gray-600"><strong>Start Time:</strong> {new Date(session.session_start_time).toLocaleString()}</p>
+      <p className="text-gray-600"><strong>End Time:</strong> {new Date(session.session_end_time).toLocaleString()}</p>
+      <p className="text-grey-600"><strong>Session Duration: </strong>  {formatDuration(session.session_duration)}</p>
 
       <h2 className="text-2xl font-semibold mt-6 mb-4">Session Intervals</h2>
-      {session.session_intervals && session.session_intervals.length > 0 ? (
+      {/* {session.session_intervals && session.session_intervals.length > 0 ? (
         <ul className="list-disc pl-5">
           {session.session_intervals.map((interval, index) => (
             <li key={index} className="mb-4">
@@ -63,7 +68,14 @@ const SessionDetailPage = ({ params }) => {
         </ul>
       ) : (
         <p>No intervals available for this session.</p>
-      )}
+      )} */}
+      
+      <div>
+        <PresencePieChart session={session} />
+        <HeatmapPlot session={session} />
+        <PosturePieChart session={session} />
+        <BubbleChart session={session} />
+      </div>
     </div>
   );
 };
