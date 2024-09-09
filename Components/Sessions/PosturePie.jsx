@@ -1,14 +1,20 @@
 import React from 'react';
 import { Pie } from 'react-chartjs-2'; // For Pie chart
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import useStore from '@/context/useStore';
 
 // Register required elements
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const ACTIVE_POSTURES = ["Lecturing", "High Right", "Mid Right", "Left High", "Mid High"];
-const PASSIVE_POSTURES = ["Normal"];
+const ACTIVE_POSTURES = ["Lecturing", "Right High", "Right Mid", "Left High ", "Left Mid "];
+const PASSIVE_POSTURES = ["Normal "];
 
 const calculatePostureData = (session) => {
+
+  const setActiveTime = useStore((state)=> state.setActiveTime);
+  const setPassiveTime = useStore((state)=> state.setPassiveTime);
+
+
   const postureCounts = session.session_intervals.reduce((acc, interval) => {
     acc[interval.posture] = (acc[interval.posture] || 0) + 1;
     return acc;
@@ -18,9 +24,13 @@ const calculatePostureData = (session) => {
     .filter((posture) => ACTIVE_POSTURES.includes(posture))
     .reduce((acc, key) => acc + postureCounts[key], 0);
 
+  setActiveTime(activeTime);
+
   const passiveTime = Object.keys(postureCounts)
     .filter((posture) => PASSIVE_POSTURES.includes(posture))
     .reduce((acc, key) => acc + postureCounts[key], 0);
+
+  setPassiveTime(passiveTime);
 
   return {
     postureCounts,
@@ -31,6 +41,7 @@ const calculatePostureData = (session) => {
 
 const PosturePieChart = ({ session }) => {
   const { postureCounts, activeTime, passiveTime } = calculatePostureData(session);
+
 
   const data = {
     labels: Object.keys(postureCounts),
@@ -56,7 +67,7 @@ const PosturePieChart = ({ session }) => {
 
   return (
     <div className="w-full md:w-1/2 mx-auto"> {/* Restrict the width for responsiveness */}
-      <h3 className="text-xl font-bold text-center">Dominant Postures</h3>
+      {/* <h3 className="text-xl font-bold text-center">Dominant Postures</h3> */}
       <div className="max-w-xs mx-auto"> {/* Max width for the chart container */}
         <Pie data={data} options={options} />
       </div>
@@ -69,6 +80,8 @@ const ActivePassiveStat = ({ activeTime, passiveTime }) => {
   const totalTime = activeTime + passiveTime;
   const activePercentage = (activeTime / totalTime) * 100;
   const passivePercentage = (passiveTime / totalTime) * 100;
+
+  
 
   return (
     <div className="mt-4">

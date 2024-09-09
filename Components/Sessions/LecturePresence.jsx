@@ -46,7 +46,7 @@ const calculatePresenceData = (session) => {
   
     return (
       <div className='w-full md:w-1/2 mx-auto'>
-        <h3 className="text-xl font-bold">Lecture Presence</h3>
+        {/* <h3 className="text-xl font-bold">Lecture Presence</h3> */}
         <div className='max-w-xs mx-auto'>
             <Pie data={data} options={options}/>
         </div>

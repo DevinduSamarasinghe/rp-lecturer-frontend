@@ -1,20 +1,22 @@
-import create from 'zustand';
+// store/useStore.js
+import { create } from 'zustand';
 
-const useStore = create((set)=>({
+// Zustand store definition
+const useStore = create((set) => ({
+//   user: null,
+//   theme: 'light',
+//   session: null,
 
-    user:null,
-    theme: 'light',
-    isLoggedIn: true,
-    setUser : (user)=> set(()=> ({user})),
-    toggleTheme: ()=> set((state)=>({theme: state.theme === 'light' ? 'dark' : 'light'})),
-    setLogInStatus: (status)=> set(()=>({isLoggedIn: status})),
+//   // Actions
+//   setUser: (user) => set(() => ({ user })),
+//   toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
+//   setSession: (session) => set(() => ({ session })),
 
-    facialRecognitionAccuracy: null,
-    lecturePresenceSpread: null,
-    setFacialRecognitionAccuracy: (accuracy)=> set(()=> ({facialRecognitionAccuracy: accuracy})),
-    setLecturePresenceSpread: (spread)=> set(()=> ({lecturePresenceSpread: spread})),
+    activeTime: null,
+    passiveTime: null,
 
-    
-}))
+    setActiveTime: (activeTime) => set(() => ({ activeTime })),
+    setPassiveTime: (passiveTime) => set(() => ({ passiveTime })),
+}));
 
 export default useStore;

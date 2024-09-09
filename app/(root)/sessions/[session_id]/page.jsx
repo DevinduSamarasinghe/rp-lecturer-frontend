@@ -1,3 +1,4 @@
+// SessionDetailPage.jsx
 'use client';
 
 import PosturePieChart from '@/Components/Sessions/PosturePie';
@@ -6,10 +7,10 @@ import { formatDuration } from '@/lib/format_utils/format_duration';
 import PresencePieChart from '@/Components/Sessions/LecturePresence';
 import BubbleChart from '@/Components/Sessions/BubbleChart';
 import SessionSidebar from '@/Components/Sessions/SessionSideBar';
+import HistoryComponent from '@/Components/Sessions/HistoryComponent';
 
 const SessionDetailPage = ({ params }) => {
   const { session_id } = params;
-
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,7 +36,7 @@ const SessionDetailPage = ({ params }) => {
     };
   
     fetchSession();
-  }, [session_id]); // Make sure to include session_id in the dependency array
+  }, [session_id]);
 
   if (loading) return <div className="text-center mt-10 text-xl">Loading session...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">Error: {error}</div>;
@@ -61,9 +62,9 @@ const SessionDetailPage = ({ params }) => {
   const lecturePresenceSpread = 'Evenly distributed across the session'; // Based on Bubble chart insights
 
   return (
-    <div className="container mx-auto p-6 flex gap-6">
+    <div className="flex w-full h-full overflow-hidden">
       {/* Left column with insights */}
-      <div className="w-1/4">
+      <div className="w-1/4 h-full overflow-auto">
         <SessionSidebar 
           facialRecognitionAccuracy={facialRecognitionAccuracy}
           lecturePresenceSpread={lecturePresenceSpread}
@@ -71,34 +72,40 @@ const SessionDetailPage = ({ params }) => {
       </div>
 
       {/* Main column with session details and charts */}
-      <div className="w-1/2">
-        {/* Display session time and date */}
-        <h1 className="text-3xl font-bold mb-2">
-          Session: {sessionStartTime} - {sessionEndTime}
-        </h1>
-        <p className="text-gray-500 text-sm mb-4">on {sessionDate}</p>
-        <p className="text-gray-600">
-          <strong>Session Duration: </strong> {formatDuration(session.session_duration)}
-        </p>
+      <div className="flex-1 h-full overflow-auto p-6">
+        <div className='overflow-hidden '>
+          <h1 className="text-3xl font-bold mb-2">
+            Session: {sessionStartTime} - {sessionEndTime}
+          </h1>
+          <p className="text-gray-500 text-sm mb-4">on {sessionDate}</p>
+          <p className="text-gray-600 pb-5">
+            <strong>Session Duration: </strong> {formatDuration(session.session_duration)}
+          </p>
+        </div>
 
-        <h2 className="text-2xl font-semibold mt-6 mb-4">Session Intervals</h2>
+        <div className="flex flex-col space-y-6">
+          {/* Presence Pie Chart */}
+          <div className="bg-white shadow-lg rounded-lg p-6">
+            <h3 className="text-lg font-bold mb-4">Lecture Presence</h3>
+            <PresencePieChart session={session} />
+          </div>
 
-        {/* Box with shadow around the pie charts */}
-        <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
-          <div className="flex flex-wrap justify-center space-x-4">
-            <div className="w-1/3">
-              <PresencePieChart session={session} />
-            </div>
-            <div className="w-1/3">
-              <PosturePieChart session={session} />
-            </div>
+          {/* Posture Pie Chart */}
+          <div className="bg-white shadow-lg rounded-lg p-6">
+            <h3 className="text-lg font-bold mb-4">Dominant Postures</h3>
+            <PosturePieChart session={session} />
           </div>
         </div>
 
-        {/* Bubble chart aligned with the box above */}
-        <div className="bg-white shadow-lg rounded-lg p-6 w-full mx-auto">
+        {/* Bubble chart below the pie charts */}
+        <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
           <BubbleChart session={session} />
         </div>
+      </div>
+
+      {/* Right column with history analysis */}
+      <div className="w-1/4 h-full overflow-auto">
+        <HistoryComponent />
       </div>
     </div>
   );
