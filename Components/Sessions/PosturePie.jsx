@@ -3,6 +3,8 @@ import { Pie } from 'react-chartjs-2'; // For Pie chart
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import useStore from '@/context/useStore';
 
+import { calculateStagnancyAndMovement } from '@/lib/stagnancy';
+
 // Register required elements
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -14,6 +16,9 @@ const calculatePostureData = (session) => {
   const setActiveTime = useStore((state)=> state.setActiveTime);
   const setPassiveTime = useStore((state)=> state.setPassiveTime);
 
+  const setIsStagnant = useStore((state)=> state.setIsStagnant);
+  const setMostFrequentPosition = useStore((state)=> state.setMostFrequentPosition);
+  const setMostFrequentDirection = useStore((state)=> state.setMostFrequentDirection);
 
   const postureCounts = session.session_intervals.reduce((acc, interval) => {
     acc[interval.posture] = (acc[interval.posture] || 0) + 1;
@@ -31,6 +36,13 @@ const calculatePostureData = (session) => {
     .reduce((acc, key) => acc + postureCounts[key], 0);
 
   setPassiveTime(passiveTime);
+
+  const { isStagnant, mostFrequentPosition, mostFrequentDirection } = calculateStagnancyAndMovement(session);
+  setIsStagnant(isStagnant);
+  setMostFrequentPosition(mostFrequentPosition);
+  setMostFrequentDirection(mostFrequentDirection);
+  
+
 
   return {
     postureCounts,
@@ -84,10 +96,16 @@ const ActivePassiveStat = ({ activeTime, passiveTime }) => {
   
 
   return (
-    <div className="mt-4">
+<div className="mt-4">
       <h4 className="font-bold text-center">Active vs. Passive Time</h4>
-      <p className="text-center"><strong>Active Time:</strong> {activePercentage.toFixed(2)}%</p>
-      <p className="text-center"><strong>Passive Time:</strong> {passivePercentage.toFixed(2)}%</p>
+      <div className="flex justify-center gap-8 mt-2"> {/* Flex container with some gap between the items */}
+        <div className="text-center">
+          <strong>Active Time:</strong> {activePercentage.toFixed(2)}%
+        </div>
+        <div className="text-center">
+          <strong>Passive Time:</strong> {passivePercentage.toFixed(2)}%
+        </div>
+      </div>
     </div>
   );
 };

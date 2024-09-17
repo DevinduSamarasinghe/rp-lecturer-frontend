@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Bubble } from 'react-chartjs-2';
 import { Chart as ChartJS, Tooltip, Legend, PointElement, LinearScale } from 'chart.js';
 import useStore from '@/context/useStore';
@@ -14,7 +14,6 @@ const canvasHeight = 400; // Height of the canvas
 const getBubbleChartData = (session) => {
   return session.session_intervals.map((interval) => {
     const [noseX, noseY, depthZ] = interval.nose_coords?.slice(0, 3) || [0, 0, 0]; // Use the nose coordinates
-    //const trackingDuration = interval.tracking_duration || 1; // Use tracking_duration as the bubble size
 
     // Convert normalized nose_coords (0 to 1) to pixel values
     const x = noseX * canvasWidth;
@@ -23,7 +22,6 @@ const getBubbleChartData = (session) => {
     // Normalize depthZ (range from -1 to 1) to bubble size (range 1 to 10)
     const bubbleSize = 1 + 1000 * (depthZ + 1) / 2; // Normalize to [1, 10] range
 
-    console.log('Bubble Data:', { x, y, bubbleSize }); // Log for debugging
     return {
       x: x, // X position of the landmark
       y: bubbleSize, // Y position of the landmark
@@ -32,14 +30,65 @@ const getBubbleChartData = (session) => {
   });
 };
 
+// Function to analyze data points and make deductions
+const analyzeMovement = (bubbleData) => {
+  const leftBoundary = canvasWidth / 3;
+  const rightBoundary = (2 * canvasWidth) / 3;
 
-const BubbleChart = ({ session }) => {
+  let leftCount = 0;
+  let middleCount = 0;
+  let rightCount = 0;
+
+  // Count points in each section
+  bubbleData.forEach((point) => {
+    if (point.x < leftBoundary) {
+      leftCount++;
+    } else if (point.x >= leftBoundary && point.x < rightBoundary) {
+      middleCount++;
+    } else {
+      rightCount++;
+    }
+  });
+
+  // Determine the densest area
+  const maxPoints = Math.max(leftCount, middleCount, rightCount);
+  let densestArea = '';
+  if (maxPoints === leftCount) densestArea = 'Left';
+  if (maxPoints === middleCount) densestArea = 'Middle';
+  if (maxPoints === rightCount) densestArea = 'Right';
+
+  // Deduce movement
+  const sectionsUsed = [leftCount > 0, middleCount > 0, rightCount > 0].filter(Boolean).length;
+
+  let movementDeduction = '';
+  if (sectionsUsed === 1) {
+    movementDeduction = 'The person did not move much and stayed in one area.';
+  } else if (sectionsUsed === 2) {
+    movementDeduction = 'The lecturer used ample space to teach.';
+  } else if (sectionsUsed === 3) {
+    movementDeduction = 'The lecturer utilized the full space.';
+  }
+
+  return { densestArea, movementDeduction };
+};
+
+const BubbleNonLinear = ({ session }) => {
   // Extract dynamic bubble data from session intervals
   const bubbleData = getBubbleChartData(session);
 
   const setLecturePresenseSpread = useStore((state) => state.setLecturePresenceSpread);
+  const setDensestArea = useStore((state) => state.setDensestArea);
+  const setMovementDeduction = useStore((state) => state.setMovementDeduction);
 
-  console.log('Bubble Data:', bubbleData); // Log for debugging
+  // Perform analysis based on the data
+  const { densestArea, movementDeduction } = analyzeMovement(bubbleData);
+
+  useEffect(() => {
+    // Set the lecture presence spread based on the analysis
+    setLecturePresenseSpread(`Densest Area: ${densestArea}, Movement Deduction: ${movementDeduction}`);
+    setDensestArea(densestArea);
+    setMovementDeduction(movementDeduction);
+  }, [densestArea, movementDeduction, setLecturePresenseSpread]);
 
   const data = {
     datasets: [
@@ -89,8 +138,11 @@ const BubbleChart = ({ session }) => {
       <div style={{ height: '500px' }}>
         <Bubble data={data} options={options} />
       </div>
+      {/* <p className="text-center mt-4 text-sm text-gray-700">
+        {`Densest Area: ${densestArea}, Movement Deduction: ${movementDeduction}`}
+      </p> */}
     </div>
   );
 };
 
-export default BubbleChart;
+export default BubbleNonLinear;

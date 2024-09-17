@@ -101,8 +101,6 @@ export async function POST(req) {
     return NextResponse.json({ message: 'User Deleted Successfully!', user: deletedUser });
   }
 
-  console.log(`Webhook with ID: ${id} and type: ${eventType}`);
-  console.log('Webhook body:', body);
 
   return new Response('', { status: 200 });
 }

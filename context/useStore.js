@@ -3,20 +3,34 @@ import { create } from 'zustand';
 
 // Zustand store definition
 const useStore = create((set) => ({
-//   user: null,
-//   theme: 'light',
-//   session: null,
-
-//   // Actions
-//   setUser: (user) => set(() => ({ user })),
-//   toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
-//   setSession: (session) => set(() => ({ session })),
-
     activeTime: null,
     passiveTime: null,
+    sessionContext: null,
+
+    isStagnant: false, 
+    mostFrequentPosition: [0, 0],
+    mostFrequentDirection: 'None',
+
+    facialRecognitionAccuracy: null,
+    lecturePresenceSpread: null,
+
+    densestArea: null,
+    movementDeduction: null,
+
 
     setActiveTime: (activeTime) => set(() => ({ activeTime })),
     setPassiveTime: (passiveTime) => set(() => ({ passiveTime })),
+    setSessionContext: (session) => set(() => ({ session })),
+    
+    setIsStagnant: (isStagnant) => set(() => ({ isStagnant })),
+    setMostFrequentPosition: (mostFrequentPosition) => set(() => ({ mostFrequentPosition })),
+    setMostFrequentDirection: (mostFrequentDirection) => set(() => ({ mostFrequentDirection })),
+
+    setFacialRecognitionAccuracy: (facialRecognitionAccuracy) => set(() => ({ facialRecognitionAccuracy })),
+    setLecturePresenceSpread: (lecturePresenceSpread) => set(() => ({ lecturePresenceSpread })),
+
+    setDensestArea: (densestArea) => set(() => ({ densestArea })),
+    setMovementDeduction: (movementDeduction) => set(() => ({ movementDeduction })),
 }));
 
 export default useStore;

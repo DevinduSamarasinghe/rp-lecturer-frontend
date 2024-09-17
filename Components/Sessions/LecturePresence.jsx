@@ -1,8 +1,11 @@
-import React from 'react';
+"use client"
+
+import React, { useEffect } from 'react';
 
 import { Pie } from 'react-chartjs-2'; // For Pie chart
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
+import useStore from '@/context/useStore';
 // Register required elements
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -11,7 +14,7 @@ const calculatePresenceData = (session) => {
       acc[interval.face_name] = (acc[interval.face_name] || 0) + 1;
       return acc;
     }, {});
-  
+    
     const totalIntervals = session.session_intervals.length;
     const lecturerPresence = (faceCounts['devindu'] || 0) / totalIntervals * 100;
   
@@ -21,6 +24,11 @@ const calculatePresenceData = (session) => {
   // Pie chart for presence data (based on face_name)
   const PresencePieChart = ({ session }) => {
     const { faceCounts, lecturerPresence } = calculatePresenceData(session);
+    const setFacialAccuracy = useStore((state) => state.setFacialRecognitionAccuracy);
+    useEffect(()=>{
+      setFacialAccuracy
+      (lecturerPresence);
+    },[])
   
     const data = {
       labels: Object.keys(faceCounts),
@@ -43,6 +51,8 @@ const calculatePresenceData = (session) => {
           },
         },
       };
+
+    
   
     return (
       <div className='w-full md:w-1/2 mx-auto'>
@@ -50,7 +60,6 @@ const calculatePresenceData = (session) => {
         <div className='max-w-xs mx-auto'>
             <Pie data={data} options={options}/>
         </div>
-        {lecturerPresence < 90 && <p style={{ color: 'red' }}>Warning: Lecturer presence is below 90% ({lecturerPresence.toFixed(2)}%)</p>}
       </div>
     );
   };

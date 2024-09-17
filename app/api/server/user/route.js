@@ -27,8 +27,6 @@ const getUserByEmailHandler = async (email)=>{
 const getCurrentUserHandler = async ()=>{
     try {
         const sessionClaims = auth();
-
-        console.log("Session Claims:", sessionClaims)
         const user_email = sessionClaims.user.primaryEmailAddressId;
         return NextResponse.json({user_email}, {status:200})
     } catch(error){

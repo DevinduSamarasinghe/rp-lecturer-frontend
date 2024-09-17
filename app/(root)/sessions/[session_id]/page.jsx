@@ -6,8 +6,11 @@ import React, { useEffect, useState } from 'react';
 import { formatDuration } from '@/lib/format_utils/format_duration';
 import PresencePieChart from '@/Components/Sessions/LecturePresence';
 import BubbleChart from '@/Components/Sessions/BubbleChart';
-import SessionSidebar from '@/Components/Sessions/SessionSideBar';
+import SessionSidebar from '@/Components/Sessions/SessionSideBar2';
 import HistoryComponent from '@/Components/Sessions/HistoryComponent';
+import useStore from '@/context/useStore';
+import { Bubble } from 'react-chartjs-2';
+import BubbleNonLinear from '@/Components/Sessions/BubbleNonLinear';
 
 const SessionDetailPage = ({ params }) => {
   const { session_id } = params;
@@ -15,10 +18,10 @@ const SessionDetailPage = ({ params }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const setActiveSession = useStore((state)=> state.setSessionContext);
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        console.log('Fetching session:', session_id); // Log for debugging
         const response = await fetch(`/api/server/sessions?session_id=${session_id}`);
   
         if (!response.ok) {
@@ -27,6 +30,7 @@ const SessionDetailPage = ({ params }) => {
   
         const data = await response.json();
         setSession(data);
+        setActiveSession(data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching session details:', error);
@@ -38,7 +42,7 @@ const SessionDetailPage = ({ params }) => {
     fetchSession();
   }, [session_id]);
 
-  if (loading) return <div className="text-center mt-10 text-xl">Loading session...</div>;
+  if (loading) return <div className="text-center mt-10 text-xl ml-6">Loading session...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">Error: {error}</div>;
   if (!session) return <div className="text-center mt-10 text-gray-500">Session not found</div>;
 
@@ -62,7 +66,7 @@ const SessionDetailPage = ({ params }) => {
   const lecturePresenceSpread = 'Evenly distributed across the session'; // Based on Bubble chart insights
 
   return (
-    <div className="flex w-full h-full overflow-hidden">
+    <div className="flex w-full overflow-hidden">
       {/* Left column with insights */}
       <div className="w-1/4 h-full overflow-auto">
         <SessionSidebar 
@@ -74,7 +78,7 @@ const SessionDetailPage = ({ params }) => {
       {/* Main column with session details and charts */}
       <div className="flex-1 h-full overflow-auto p-6">
         <div className='overflow-hidden '>
-          <h1 className="text-3xl font-bold mb-2">
+          <h1 className="text-3xl font-bold">
             Session: {sessionStartTime} - {sessionEndTime}
           </h1>
           <p className="text-gray-500 text-sm mb-4">on {sessionDate}</p>
@@ -97,9 +101,8 @@ const SessionDetailPage = ({ params }) => {
           </div>
         </div>
 
-        {/* Bubble chart below the pie charts */}
         <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
-          <BubbleChart session={session} />
+          <BubbleNonLinear session={session} />
         </div>
       </div>
 

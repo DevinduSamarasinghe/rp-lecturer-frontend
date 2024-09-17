@@ -19,27 +19,27 @@ const Header = () => {
                         alt={'Evently Logo'} />
                 </Link>
 
-                {/* This remains in a different SignedIn cause of the divs */}
-                <SignedIn>
-                    <nav className='md:flex-between hidden w-full max-w-xs'>
-                        <NavItems/>
-                    </nav>
-                    
-                </SignedIn>
-
-                <div className='flex w-32 justify-end gap-3'>
+                <div className='flex items-center justify-end gap-6'>
                     <SignedIn>
-                        <UserButton afterSignOutUrl='/' />
-                        <MobileNav/>
+                        <nav className='hidden md:flex items-center gap-4'>
+                            <NavItems /> {/* Moved NavItems here */}
+                        </nav>
                     </SignedIn>
 
-                    {/* SignedOut is a conditional to check if there is a session or not  */}
-                    <SignedOut>
-                        {/* asChild parameter helps us actually click the link instead of the button trigger */}
-                        <Button asChild className='rounded-full' size={'lg'}>
-                            <Link href={'/sign-in'}>Login</Link>
-                        </Button>
-                    </SignedOut>
+                    <div className='flex items-center gap-3'>
+                        <SignedIn>
+                            <UserButton afterSignOutUrl='/' />
+                            <MobileNav />
+                        </SignedIn>
+
+                        {/* SignedOut is a conditional to check if there is a session or not */}
+                        <SignedOut>
+                            {/* asChild parameter helps us actually click the link instead of the button trigger */}
+                            <Button asChild className='rounded-full' size={'lg'}>
+                                <Link href={'/sign-in'}>Login</Link>
+                            </Button>
+                        </SignedOut>
+                    </div>
                 </div>
             </div>
         </header>
