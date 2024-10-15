@@ -7,7 +7,6 @@ export default authMiddleware({
 
     //even if there is no logged in session, these routes will be accessible
     publicRoutes: [
-        //'/',
         //'/sessions/:id',
         '/api/webhook/clerk',
         '/api/server/event',
