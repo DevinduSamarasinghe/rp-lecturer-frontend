@@ -4,7 +4,8 @@ import { clerkClient } from '@clerk/nextjs';
 import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
-import { createUser, deleteUser, updateUser } from '@/lib/actions/user.actions';
+import { createUser, deleteUser, updateUser } from '@/lib/actions/user.action';
+
 
 export async function POST(req) {
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
