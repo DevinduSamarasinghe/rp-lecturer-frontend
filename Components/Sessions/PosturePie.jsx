@@ -8,7 +8,7 @@ import { calculateStagnancyAndMovement } from '@/lib/stagnancy';
 // Register required elements
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const ACTIVE_POSTURES = ["Lecturing", "Right High", "Right Mid", "Left High ", "Left Mid "];
+const ACTIVE_POSTURES = ["Lecturing", "Right High ", "Right Mid ", "Left High ", "Left Mid "];
 const PASSIVE_POSTURES = ["Normal "];
 
 const calculatePostureData = (session) => {
