@@ -18,8 +18,6 @@ const SessionDetailPage = ({ params }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  console.log("")
-
   const setActiveSession = useStore((state)=> state.setSessionContext);
   useEffect(() => {
     const fetchSession = async () => {
