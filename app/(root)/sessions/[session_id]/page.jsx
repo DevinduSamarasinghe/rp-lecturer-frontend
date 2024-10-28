@@ -1,15 +1,15 @@
 // SessionDetailPage.jsx
 'use client';
 
+
 import PosturePieChart from '@/Components/Sessions/PosturePie';
 import React, { useEffect, useState } from 'react';
 import { formatDuration } from '@/lib/format_utils/format_duration';
 import PresencePieChart from '@/Components/Sessions/LecturePresence';
-import BubbleChart from '@/Components/Sessions/BubbleChart';
+
 import SessionSidebar from '@/Components/Sessions/SessionSideBar2';
 import HistoryComponent from '@/Components/Sessions/HistoryComponent';
 import useStore from '@/context/useStore';
-import { Bubble } from 'react-chartjs-2';
 import BubbleNonLinear from '@/Components/Sessions/BubbleNonLinear';
 
 const SessionDetailPage = ({ params }) => {

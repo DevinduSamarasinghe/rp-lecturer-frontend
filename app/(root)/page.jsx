@@ -1,137 +1,44 @@
-'use client'
+// pages/index.tsx
+import { Button } from "@/Components/ui/button";
+import Link from "next/link";
+import Image from "next/image";
 
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { formatDuration } from '@/lib/format_utils/format_duration'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/Components/ui/table' // import shadcn's table components
-import { Button } from '@/Components/ui/button' // for pagination buttons
-import crypto from 'crypto' // For hashing
+const Home = async() => {
 
-const PAGE_SIZE = 8 // Number of sessions per page
+    return (
+        <>
+            <section className="bg-primary-50 bg-dotted-pattern bg-contain py-5 md:py-10">
+            <div className="wrapper grid grid-cols-1 gap-5 md:grid-cols-2 2xl:gap-0">
+                <div className="flex flex-col justify center gap-8">
+                    <h1 className="h1-bold">Host, Connect, Celebrate: Your Events, Our Platforms!</h1>
+                    <p className="p-regular-20 md:p-regular-24">
+                        Book and learn helpful tips from 2,000+ mentors in world-class companies with our global community
+                    </p>
+                    <Button asChild size='lg' className="button w-full sm:w-fit">
+                        <Link href={'/seshs'}>Start Now</Link>
+                    </Button>
+                </div>
+                <Image
+                    src={'/assets/images/hero.png'}
+                    alt="hero"
+                    width={500}
+                    height={500}
+                    className="max-h-[70vh] object-contain object-center 2xl:max-h-[50vh]"
+                />
+            </div>
+            <section id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12 ">
+        <h2 className="h2-bold">Trusted by <br/> Thousands of Events</h2>
+        {/* <div className="flex w-full flex-col gap-5 md:flex-row">
+          Search
+          CategoryFilter
+        </div> */}
+    </section>
+        </section>
 
-// Function to hash and shorten the session ID for display
-const hashAndShortenSessionID = (sessionId) => {
-  const hash = crypto.createHash('md5').update(sessionId).digest('hex') // Generate MD5 hash
-  return hash.slice(0, 8) // Return first 8 characters of the hash
-}
 
-const SessionsPage = () => {
-  const [sessions, setSessions] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [currentPage, setCurrentPage] = useState(1)
+        </>
+        
+    );
+};
 
-  useEffect(() => {
-    const fetchSessions = async () => {
-      try {
-        const response = await fetch('/api/server/sessions')
-
-        if (!response.ok) {
-          throw new Error('Error fetching sessions')
-        }
-
-        const data = await response.json()
-        setSessions(data)
-        setLoading(false)
-      } catch (error) {
-        console.error('Error fetching sessions', error)
-        setError(error.message)
-        setLoading(false)
-      }
-    }
-    fetchSessions()
-  }, [])
-
-  const startIndex = (currentPage - 1) * PAGE_SIZE
-  const endIndex = startIndex + PAGE_SIZE
-  const paginatedSessions = sessions.slice(startIndex, endIndex)
-
-  if (loading)
-    return <div className='text-center mt-10 text-xl ml-10'>Loading sessions...</div>
-  if (error)
-    return <div className='text-center mt-10 text-red-500'>Error: {error}</div>
-
-  const handleNextPage = () => {
-    if (currentPage < Math.ceil(sessions.length / PAGE_SIZE)) {
-      setCurrentPage(currentPage + 1)
-    }
-  }
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1)
-    }
-  }
-
-  return (
-    <div className='container mx-auto p-6'>
-      <h1 className='text-3xl font-bold mb-6 text-center'>Sessions</h1>
-
-      {/* Table starts here */}
-      <div className='shadow-md rounded-lg overflow-x-auto my-10'>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Session ID</TableHead>
-              <TableHead>Session Start Time</TableHead>
-              <TableHead>Session End Time</TableHead>
-              <TableHead>Duration</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedSessions.map(session => (
-              <TableRow key={session.session_id}>
-                <TableCell>
-                  {/* Pass the original session_id in the URL but show the hashed version */}
-                  <Link href={`/sessions/${session.session_id}`} passHref>
-
-                    EV - {hashAndShortenSessionID(session.session_id)}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  {new Date(session.session_start_time).toLocaleString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(session.session_end_time).toLocaleString()}
-                </TableCell>
-                <TableCell>
-                  {formatDuration(session.session_duration)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Pagination controls */}
-      <div className='flex justify-between mt-6'>
-        <Button
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-          className='mr-2'
-        >
-          Previous
-        </Button>
-        <span>
-          Page {currentPage} of {Math.ceil(sessions.length / PAGE_SIZE)}
-        </span>
-        <Button
-          onClick={handleNextPage}
-          disabled={currentPage >= Math.ceil(sessions.length / PAGE_SIZE)}
-          className='ml-2'
-        >
-          Next
-        </Button>
-      </div>
-    </div>
-  )
-}
-
-export default SessionsPage
+export default Home;

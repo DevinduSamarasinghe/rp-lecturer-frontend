@@ -22,8 +22,8 @@ const getBubbleChartData = (session) => {
 
     // Normalize depthZ (range from -1 to 1) to bubble size (range 1 to 10)
     const bubbleSize = 1 + 1000 * (depthZ + 1) / 2; // Normalize to [1, 10] range
+    // console.log('Bubble Data:', { x, y, bubbleSize }); // Log for debugging
 
-    console.log('Bubble Data:', { x, y, bubbleSize }); // Log for debugging
     return {
       x: x, // X position of the landmark
       y: bubbleSize, // Y position of the landmark
@@ -38,8 +38,6 @@ const BubbleChart = ({ session }) => {
   const bubbleData = getBubbleChartData(session);
 
   const setLecturePresenseSpread = useStore((state) => state.setLecturePresenceSpread);
-
-  console.log('Bubble Data:', bubbleData); // Log for debugging
 
   const data = {
     datasets: [
